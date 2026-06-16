@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: mini-book-hub-preview
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - plugin:
+        # Placeholder contract for the future ApplicationSet Plugin Generator.
+        # The plugin must read:
+        # - preview-metadata/pr-<number>.json
+        # - image-locks/main.json
+        # - PR label state, especially preview-ready
+        #
+        # It must return one item per component Application:
+        # pr, component, namespace, applicationName, affectedComponents,
+        # smokeProfile, and resolved images.
+        configMapRef:
+          name: mini-book-hub-preview-plugin
+        input:
+          parameters:
+            metadataPath: preview-metadata
+            stableImageLock: image-locks/main.json
+            readinessLabel: preview-ready
+        requeueAfterSeconds: 60
+  template:
+    metadata:
+      name: "{{ .applicationName }}"
+      labels:
+        app.kubernetes.io/part-of: mini-book-hub
+        preview.mini-book-hub.io/pr: "{{ .pr }}"
+        preview.mini-book-hub.io/component: "{{ .component }}"
+      annotations:
+        preview.mini-book-hub.io/affected-components: "{{ .affectedComponents }}"
+        preview.mini-book-hub.io/smoke-profile: "{{ .smokeProfile }}"
+        preview.mini-book-hub.io/frontend-image: "{{ .images.frontend }}"
+        preview.mini-book-hub.io/book-service-image: '{{ index .images "book-service" }}'
+        preview.mini-book-hub.io/reader-service-image: '{{ index .images "reader-service" }}'
+        preview.mini-book-hub.io/order-service-image: '{{ index .images "order-service" }}'
+    spec:
+      project: default
+      sources:
+        - repoURL: https://github.com/nguyenthanhdat2707/XBrain_Phase2_Gitops.git
+          targetRevision: HEAD
+          # Per-component preview Application path.
+          path: "apps/mini-book-hub/{{ .component }}/overlays/preview"
+        - repoURL: https://github.com/nguyenthanhdat2707/XBrain_Phase2_Gitops.git
+          targetRevision: HEAD
+          # Shared smoke Job resources synced into the same preview namespace.
+          path: preview-smoke
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

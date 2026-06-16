@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mini-book-hub.local/schemas/preview-metadata.v1.schema.json",
+  "title": "Mini Book Hub Preview Metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "pr",
+    "status",
+    "baseMainSha",
+    "mergeResultSha",
+    "affectedComponents",
+    "candidateImages",
+    "stableImageLock",
+    "smokeProfile",
+    "createdBy"
+  ],
+  "properties": {
+    "apiVersion": {
+      "const": "preview.mini-book-hub.io/v1"
+    },
+    "kind": {
+      "const": "PreviewMetadata"
+    },
+    "pr": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "status": {
+      "const": "preview-ready"
+    },
+    "baseMainSha": {
+      "type": "string",
+      "minLength": 7
+    },
+    "mergeResultSha": {
+      "type": "string",
+      "minLength": 7
+    },
+    "affectedComponents": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/component"
+      }
+    },
+    "candidateImages": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "frontend": {
+          "$ref": "#/$defs/digestImage"
+        },
+        "book-service": {
+          "$ref": "#/$defs/digestImage"
+        },
+        "reader-service": {
+          "$ref": "#/$defs/digestImage"
+        },
+        "order-service": {
+          "$ref": "#/$defs/digestImage"
+        }
+      }
+    },
+    "stableImageLock": {
+      "type": "string",
+      "pattern": "^image-locks/[A-Za-z0-9._-]+\\.json$"
+    },
+    "smokeProfile": {
+      "$ref": "#/$defs/smokeProfile"
+    },
+    "createdBy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ciRunId", "workflow"],
+      "properties": {
+        "ciRunId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "workflow": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "$defs": {
+    "component": {
+      "enum": ["frontend", "book-service", "reader-service", "order-service"]
+    },
+    "smokeProfile": {
+      "enum": [
+        "frontend",
+        "book-service",
+        "reader-service",
+        "order-service",
+        "network-runtime"
+      ]
+    },
+    "digestImage": {
+      "type": "string",
+      "pattern": "^ghcr\\.io/nguyenthanhdat2707/mini-book-hub-(frontend|book-service|reader-service|order-service)@sha256:[A-Za-z0-9._-]+$"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "apiVersion": "preview.mini-book-hub.io/v1",
+  "kind": "PreviewMetadata",
+  "pr": 126,
+  "status": "preview-ready",
+  "baseMainSha": "abc-main-sha",
+  "mergeResultSha": "frontend-merge-sha",
+  "affectedComponents": ["frontend"],
+  "candidateImages": {
+    "frontend": "ghcr.io/nguyenthanhdat2707/mini-book-hub-frontend@sha256:candidatefrontend"
+  },
+  "stableImageLock": "image-locks/main.json",
+  "smokeProfile": "frontend",
+  "createdBy": {
+    "ciRunId": "123456792",
+    "workflow": "pr-impact-gate"
+  }
+}

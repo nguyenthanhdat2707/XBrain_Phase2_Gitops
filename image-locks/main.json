@@ -1,0 +1,12 @@
+{
+  "apiVersion": "images.mini-book-hub.io/v1",
+  "kind": "ImageLock",
+  "environment": "main-stable",
+  "mainSha": "main-stable-sha",
+  "images": {
+    "frontend": "ghcr.io/nguyenthanhdat2707/mini-book-hub-frontend@sha256:stablefrontend",
+    "book-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-book-service@sha256:stablebookservice",
+    "reader-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-reader-service@sha256:stablereaderservice",
+    "order-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-order-service@sha256:stableorderservice"
+  }
+}

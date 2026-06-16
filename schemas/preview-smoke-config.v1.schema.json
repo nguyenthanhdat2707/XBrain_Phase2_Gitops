@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mini-book-hub.local/schemas/preview-smoke-config.v1.schema.json",
+  "title": "Mini Book Hub Preview Smoke Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "PR_NUMBER",
+    "AFFECTED_COMPONENTS",
+    "SMOKE_PROFILE",
+    "FRONTEND_URL",
+    "BOOK_SERVICE_URL",
+    "READER_SERVICE_URL",
+    "ORDER_SERVICE_URL"
+  ],
+  "properties": {
+    "PR_NUMBER": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "AFFECTED_COMPONENTS": {
+      "type": "string",
+      "minLength": 1
+    },
+    "SMOKE_PROFILE": {
+      "enum": [
+        "frontend",
+        "book-service",
+        "reader-service",
+        "order-service",
+        "network-runtime"
+      ]
+    },
+    "FRONTEND_URL": {
+      "$ref": "#/$defs/httpUrl"
+    },
+    "BOOK_SERVICE_URL": {
+      "$ref": "#/$defs/httpUrl"
+    },
+    "READER_SERVICE_URL": {
+      "$ref": "#/$defs/httpUrl"
+    },
+    "ORDER_SERVICE_URL": {
+      "$ref": "#/$defs/httpUrl"
+    }
+  },
+  "$defs": {
+    "httpUrl": {
+      "type": "string",
+      "pattern": "^https?://.+"
+    }
+  }
+}

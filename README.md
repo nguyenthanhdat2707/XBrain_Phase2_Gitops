@@ -10,13 +10,27 @@ Argo CD will sync from this repo. It does not contain application source code, T
 desired state -> validate manifests -> Argo CD sync
 ```
 
-This phase only prepares the repository structure and minimal placeholders. It does not introduce final Kubernetes object design, canary, monitoring, Argo Rollouts, ApplicationSet preview, auto image updates, or smoke test jobs.
+This phase prepares GitOps contracts and skeletons for future pull request preview environments. It does not build application images, implement the real ApplicationSet plugin service, add production promotion, canary, or monitoring.
 
 ## Layout
 
 - `argocd`: future Argo CD root and app definitions.
 - `apps/mini-book-hub`: desired-state folders for frontend and backend services.
 - `platform`: platform placeholders for future monitoring and Argo Rollouts.
-- `preview-metadata`: placeholder for future pull request preview metadata.
+- `preview-metadata`: pull request preview metadata examples and contract notes.
+- `image-locks`: stable image digest examples for main and staging.
+- `schemas`: JSON schemas for preview metadata, image locks, plugin output, and smoke config.
+- `preview-smoke`: preview smoke ConfigMap, Job, and script skeleton.
 
-Each Mini Book Hub component has `base` plus `local`, `staging`, and `psns` overlays.
+Each Mini Book Hub component has `base` plus `local`, `staging`, `prod`, and `preview` overlays.
+
+## Preview Flow
+
+```text
+app CI writes preview metadata
+-> ApplicationSet plugin reads metadata, image locks, and preview-ready label
+-> ApplicationSet creates per-component preview Applications
+-> Argo CD syncs namespace pr-<number>
+-> preview smoke Job runs inside that namespace
+-> user approves or rejects manually based on smoke result
+```

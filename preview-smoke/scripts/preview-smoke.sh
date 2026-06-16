@@ -1,0 +1,134 @@
+#!/bin/sh
+set -eu
+
+log() {
+  printf '[preview-smoke] %s\n' "$*"
+}
+
+fail() {
+  log "check=$1 status=fail"
+  log "result=fail"
+  exit 1
+}
+
+pass() {
+  log "check=$1 status=pass"
+}
+
+require_env() {
+  name="$1"
+  eval "value=\${$name:-}"
+  if [ -z "$value" ]; then
+    fail "env-$name"
+  fi
+}
+
+http_get() {
+  name="$1"
+  url="$2"
+
+  if curl --fail --silent --show-error --location "$url" >/tmp/preview-smoke-response.json; then
+    pass "$name"
+    return
+  fi
+
+  fail "$name"
+}
+
+http_post_json() {
+  name="$1"
+  url="$2"
+  body="$3"
+
+  if curl --fail --silent --show-error --location \
+    --header "content-type: application/json" \
+    --request POST \
+    --data "$body" \
+    "$url" >/tmp/preview-smoke-response.json; then
+    pass "$name"
+    return
+  fi
+
+  fail "$name"
+}
+
+create_sample_order() {
+  http_post_json \
+    "create-order" \
+    "${ORDER_SERVICE_URL}/order" \
+    '{"readerId":"r-201","bookId":"b-101"}'
+}
+
+check_common_env() {
+  require_env PR_NUMBER
+  require_env AFFECTED_COMPONENTS
+  require_env SMOKE_PROFILE
+  require_env FRONTEND_URL
+  require_env BOOK_SERVICE_URL
+  require_env READER_SERVICE_URL
+  require_env ORDER_SERVICE_URL
+}
+
+run_frontend() {
+  http_get "frontend-root" "${FRONTEND_URL}"
+  log "todo=add Playwright later for Load Books, Load Readers, Load Orders, Create Sample Order"
+}
+
+run_book_service() {
+  http_get "book-health" "${BOOK_SERVICE_URL}/healthz"
+  http_get "book-ready" "${BOOK_SERVICE_URL}/readyz"
+  http_get "book-list" "${BOOK_SERVICE_URL}/book"
+  http_get "book-availability" "${BOOK_SERVICE_URL}/book/b-101/availability"
+  create_sample_order
+}
+
+run_reader_service() {
+  http_get "reader-health" "${READER_SERVICE_URL}/healthz"
+  http_get "reader-ready" "${READER_SERVICE_URL}/readyz"
+  http_get "reader-list" "${READER_SERVICE_URL}/reader"
+  http_get "reader-status" "${READER_SERVICE_URL}/reader/r-201/status"
+  create_sample_order
+}
+
+run_order_service() {
+  http_get "order-health" "${ORDER_SERVICE_URL}/healthz"
+  http_get "order-ready" "${ORDER_SERVICE_URL}/readyz"
+  http_get "order-list" "${ORDER_SERVICE_URL}/order"
+  http_get "book-availability" "${BOOK_SERVICE_URL}/book/b-101/availability"
+  http_get "reader-status" "${READER_SERVICE_URL}/reader/r-201/status"
+  create_sample_order
+}
+
+run_network_runtime() {
+  http_get "book-availability" "${BOOK_SERVICE_URL}/book/b-101/availability"
+  http_get "reader-status" "${READER_SERVICE_URL}/reader/r-201/status"
+  create_sample_order
+}
+
+check_common_env
+log "profile=${SMOKE_PROFILE}"
+log "pr=${PR_NUMBER}"
+log "affectedComponents=${AFFECTED_COMPONENTS}"
+
+case "$SMOKE_PROFILE" in
+  frontend)
+    run_frontend
+    ;;
+  book-service)
+    run_book_service
+    ;;
+  reader-service)
+    run_reader_service
+    ;;
+  order-service)
+    run_order_service
+    ;;
+  network-runtime)
+    run_network_runtime
+    ;;
+  *)
+    fail "profile-supported"
+    ;;
+esac
+
+log "result=pass"
