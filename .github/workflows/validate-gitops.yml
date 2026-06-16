@@ -1,0 +1,20 @@
+name: validate-gitops
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: validate placeholders
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare yaml lint stage
+        run: echo "TODO: add yaml lint when manifest files are introduced."
+      - name: Prepare kustomize build stage
+        run: echo "TODO: run kustomize build for each overlay when kustomization files exist."
+      - name: Prepare kubeconform stage
+        run: echo "TODO: run kubeconform after Kubernetes manifests are introduced."
