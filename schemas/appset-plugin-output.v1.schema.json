@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mini-book-hub.local/schemas/appset-plugin-output.v1.schema.json",
+  "title": "Mini Book Hub ApplicationSet Plugin Output Item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pr",
+    "component",
+    "namespace",
+    "applicationName",
+    "affectedComponents",
+    "smokeProfile",
+    "images"
+  ],
+  "properties": {
+    "pr": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "component": {
+      "$ref": "#/$defs/component"
+    },
+    "namespace": {
+      "type": "string",
+      "pattern": "^pr-[1-9][0-9]*$"
+    },
+    "applicationName": {
+      "type": "string",
+      "pattern": "^preview-pr-[1-9][0-9]*-(frontend|book-service|reader-service|order-service)$"
+    },
+    "affectedComponents": {
+      "type": "string",
+      "minLength": 1
+    },
+    "smokeProfile": {
+      "$ref": "#/$defs/smokeProfile"
+    },
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frontend",
+        "book-service",
+        "reader-service",
+        "order-service"
+      ],
+      "properties": {
+        "frontend": {
+          "$ref": "#/$defs/digestImage"
+        },
+        "book-service": {
+          "$ref": "#/$defs/digestImage"
+        },
+        "reader-service": {
+          "$ref": "#/$defs/digestImage"
+        },
+        "order-service": {
+          "$ref": "#/$defs/digestImage"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "component": {
+      "enum": ["frontend", "book-service", "reader-service", "order-service"]
+    },
+    "smokeProfile": {
+      "enum": [
+        "frontend",
+        "book-service",
+        "reader-service",
+        "order-service",
+        "network-runtime"
+      ]
+    },
+    "digestImage": {
+      "type": "string",
+      "pattern": "^ghcr\\.io/nguyenthanhdat2707/mini-book-hub-(frontend|book-service|reader-service|order-service)@sha256:[A-Za-z0-9._-]+$"
+    }
+  }
+}

@@ -5,16 +5,35 @@ on:
   push:
     branches:
       - main
+      - "feature/**"
+      - "fix/**"
+      - "chore/**"
 
 jobs:
-  validate:
-    name: validate placeholders
+  validate-contracts:
+    name: validate contracts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare yaml lint stage
-        run: echo "TODO: add yaml lint when manifest files are introduced."
-      - name: Prepare kustomize build stage
-        run: echo "TODO: run kustomize build for each overlay when kustomization files exist."
-      - name: Prepare kubeconform stage
-        run: echo "TODO: run kubeconform after Kubernetes manifests are introduced."
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate JSON contracts
+        run: node scripts/validate-contracts.mjs
+      - name: Validate preview metadata schema examples
+        run: npx --yes ajv-cli@5.0.0 validate --spec=draft2020 -s schemas/preview-metadata.v1.schema.json -d "preview-metadata/examples/pr-*.json"
+      - name: Validate image lock schema examples
+        run: npx --yes ajv-cli@5.0.0 validate --spec=draft2020 -s schemas/image-lock.v1.schema.json -d "image-locks/*.json"
+      - name: Validate AppSet plugin output schema example
+        run: npx --yes ajv-cli@5.0.0 validate --spec=draft2020 -s schemas/appset-plugin-output.v1.schema.json -d preview-metadata/examples/appset-plugin-output-order-service.json
+      - name: Check YAML, JSON, and Markdown formatting
+        run: npx --yes prettier@3.5.3 --check "**/*.{json,yaml,yml,md}"
+      - name: Check smoke script syntax
+        run: sh -n preview-smoke/scripts/preview-smoke.sh
+      - name: Check overlay naming
+        run: |
+          test -z "$(find apps/mini-book-hub -type d -name psns -print)"
+          for component in frontend book-service reader-service order-service; do
+            test -d "apps/mini-book-hub/${component}/overlays/prod"
+            test -d "apps/mini-book-hub/${component}/overlays/preview"
+          done

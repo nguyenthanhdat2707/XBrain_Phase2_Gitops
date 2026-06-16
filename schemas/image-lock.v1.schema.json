@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mini-book-hub.local/schemas/image-lock.v1.schema.json",
+  "title": "Mini Book Hub Image Lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "environment", "mainSha", "images"],
+  "properties": {
+    "apiVersion": {
+      "const": "images.mini-book-hub.io/v1"
+    },
+    "kind": {
+      "const": "ImageLock"
+    },
+    "environment": {
+      "enum": ["main-stable", "staging"]
+    },
+    "mainSha": {
+      "type": "string",
+      "minLength": 7
+    },
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frontend",
+        "book-service",
+        "reader-service",
+        "order-service"
+      ],
+      "properties": {
+        "frontend": {
+          "$ref": "#/$defs/digestImage"
+        },
+        "book-service": {
+          "$ref": "#/$defs/digestImage"
+        },
+        "reader-service": {
+          "$ref": "#/$defs/digestImage"
+        },
+        "order-service": {
+          "$ref": "#/$defs/digestImage"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "digestImage": {
+      "type": "string",
+      "pattern": "^ghcr\\.io/nguyenthanhdat2707/mini-book-hub-(frontend|book-service|reader-service|order-service)@sha256:[A-Za-z0-9._-]+$"
+    }
+  }
+}
