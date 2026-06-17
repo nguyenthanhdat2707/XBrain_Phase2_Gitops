@@ -1,0 +1,14 @@
+{
+  "pr": "124",
+  "previewProfile": "order-service",
+  "namespace": "pr-124",
+  "applicationName": "preview-pr-124-order-service",
+  "affectedComponents": "book-service",
+  "smokeProfiles": "book-service,order-service",
+  "images": {
+    "frontend": "ghcr.io/nguyenthanhdat2707/mini-book-hub-frontend@sha256:stablefrontend",
+    "book-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-book-service@sha256:candidatebookservice",
+    "reader-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-reader-service@sha256:stablereaderservice",
+    "order-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-order-service@sha256:stableorderservice"
+  }
+}

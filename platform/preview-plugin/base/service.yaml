@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mini-book-hub-preview-plugin
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: mini-book-hub-preview-plugin
+    app.kubernetes.io/part-of: mini-book-hub
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: mini-book-hub-preview-plugin
+  ports:
+    - name: http
+      port: 4355
+      targetPort: http

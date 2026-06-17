@@ -1,0 +1,8 @@
+labels:
+  - pairs:
+      environment: preview
+      preview.mini-book-hub.io/profile: reader-service
+    includeSelectors: false
+
+resources:
+  - ../../reader-service/base

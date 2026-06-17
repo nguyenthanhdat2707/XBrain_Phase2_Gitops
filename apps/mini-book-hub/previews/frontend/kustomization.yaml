@@ -1,0 +1,8 @@
+labels:
+  - pairs:
+      environment: preview
+      preview.mini-book-hub.io/profile: frontend
+    includeSelectors: false
+
+resources:
+  - ../../frontend/base

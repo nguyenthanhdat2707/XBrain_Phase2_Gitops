@@ -10,7 +10,8 @@
     "order-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-order-service@sha256:candidateorderservice"
   },
   "stableImageLock": "image-locks/main.json",
-  "smokeProfile": "order-service",
+  "previewProfile": "order-service",
+  "smokeProfiles": ["order-service"],
   "createdBy": {
     "ciRunId": "123456789",
     "workflow": "pr-impact-gate"

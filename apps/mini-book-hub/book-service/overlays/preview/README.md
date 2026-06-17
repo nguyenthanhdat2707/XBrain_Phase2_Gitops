@@ -1,5 +1,5 @@
 # Book Service Preview Overlay
 
-Placeholder for the per-component book-service preview overlay.
+Reserved for future book-service-only preview overrides.
 
-The future ApplicationSet plugin should render this overlay for `preview-pr-<number>-book-service`.
+Current hybrid PR preview runtime bundles live under `apps/mini-book-hub/previews`.

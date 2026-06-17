@@ -10,7 +10,8 @@
     "frontend": "ghcr.io/nguyenthanhdat2707/mini-book-hub-frontend@sha256:candidatefrontend"
   },
   "stableImageLock": "image-locks/main.json",
-  "smokeProfile": "frontend",
+  "previewProfile": "frontend",
+  "smokeProfiles": ["frontend"],
   "createdBy": {
     "ciRunId": "123456792",
     "workflow": "pr-impact-gate"

@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { renderPreviewPluginOutput } from "./render-preview-plugin-output.mjs";
 
 const files = [
   "schemas/preview-metadata.v1.schema.json",
@@ -10,6 +11,7 @@ const files = [
   "preview-metadata/examples/pr-reader-service.json",
   "preview-metadata/examples/pr-frontend.json",
   "preview-metadata/examples/appset-plugin-output-order-service.json",
+  "preview-metadata/examples/appset-plugin-output-book-service.json",
   "image-locks/main.json",
   "image-locks/staging.json"
 ];
@@ -48,7 +50,8 @@ function validatePreviewMetadata(doc, path) {
     "affectedComponents",
     "candidateImages",
     "stableImageLock",
-    "smokeProfile",
+    "previewProfile",
+    "smokeProfiles",
     "createdBy"
   ]) {
     assert(Object.hasOwn(doc, key), `${path} missing ${key}`);
@@ -64,12 +67,35 @@ function validatePreviewMetadata(doc, path) {
     `${path} invalid mergeResultSha`
   );
   assert(Array.isArray(doc.affectedComponents) && doc.affectedComponents.length > 0, `${path} no affectedComponents`);
-  assert(smokeProfiles.includes(doc.smokeProfile), `${path} unknown smokeProfile`);
+  assert(smokeProfiles.includes(doc.previewProfile), `${path} unknown previewProfile`);
+  assert(Array.isArray(doc.smokeProfiles) && doc.smokeProfiles.length > 0, `${path} no smokeProfiles`);
+  for (const smokeProfile of doc.smokeProfiles) {
+    assert(smokeProfiles.includes(smokeProfile), `${path} unknown smokeProfile ${smokeProfile}`);
+  }
 
   for (const component of doc.affectedComponents) {
     assert(components.includes(component), `${path} unknown affected component ${component}`);
     assert(Object.hasOwn(doc.candidateImages, component), `${path} missing candidate image for ${component}`);
     assertDigestImage(doc.candidateImages[component], `${path}.candidateImages.${component}`);
+  }
+
+  const previewCanRunOrderFlow = ["order-service", "network-runtime"].includes(doc.previewProfile);
+
+  if (doc.affectedComponents.includes("book-service")) {
+    assert(previewCanRunOrderFlow, `${path} book-service changes must deploy an order-flow-capable preview`);
+    assert(doc.smokeProfiles.includes("book-service"), `${path} book-service changes must smoke book-service`);
+    assert(doc.smokeProfiles.includes("order-service"), `${path} book-service changes must smoke order-service`);
+  }
+
+  if (doc.affectedComponents.includes("reader-service")) {
+    assert(previewCanRunOrderFlow, `${path} reader-service changes must deploy an order-flow-capable preview`);
+    assert(doc.smokeProfiles.includes("reader-service"), `${path} reader-service changes must smoke reader-service`);
+    assert(doc.smokeProfiles.includes("order-service"), `${path} reader-service changes must smoke order-service`);
+  }
+
+  if (doc.affectedComponents.includes("order-service")) {
+    assert(previewCanRunOrderFlow, `${path} order-service changes must deploy an order-flow-capable preview`);
+    assert(doc.smokeProfiles.includes("order-service"), `${path} order-service changes must smoke order-service`);
   }
 }
 
@@ -86,10 +112,13 @@ function validateImageLock(doc, path) {
 
 function validatePluginOutput(doc, path) {
   assert(/^[1-9][0-9]*$/.test(doc.pr), `${path} invalid pr`);
-  assert(components.includes(doc.component), `${path} unknown component`);
+  assert(smokeProfiles.includes(doc.previewProfile), `${path} unknown previewProfile`);
   assert(doc.namespace === `pr-${doc.pr}`, `${path} namespace must be pr-${doc.pr}`);
-  assert(doc.applicationName === `preview-pr-${doc.pr}-${doc.component}`, `${path} invalid applicationName`);
-  assert(smokeProfiles.includes(doc.smokeProfile), `${path} unknown smokeProfile`);
+  assert(doc.applicationName === `preview-pr-${doc.pr}-${doc.previewProfile}`, `${path} invalid applicationName`);
+  assert(typeof doc.smokeProfiles === "string" && doc.smokeProfiles.length > 0, `${path} missing smokeProfiles`);
+  for (const smokeProfile of doc.smokeProfiles.split(",")) {
+    assert(smokeProfiles.includes(smokeProfile), `${path} unknown smokeProfile ${smokeProfile}`);
+  }
 
   for (const component of components) {
     assertDigestImage(doc.images?.[component], `${path}.images.${component}`);
@@ -112,12 +141,30 @@ validatePluginOutput(
   await readJson("preview-metadata/examples/appset-plugin-output-order-service.json"),
   "preview-metadata/examples/appset-plugin-output-order-service.json"
 );
+validatePluginOutput(
+  await readJson("preview-metadata/examples/appset-plugin-output-book-service.json"),
+  "preview-metadata/examples/appset-plugin-output-book-service.json"
+);
+
+const generatedPluginOutput = await renderPreviewPluginOutput("preview-metadata/examples/pr-order-service.json");
+const expectedPluginOutput = await readJson("preview-metadata/examples/appset-plugin-output-order-service.json");
+assert(
+  JSON.stringify(generatedPluginOutput) === JSON.stringify(expectedPluginOutput),
+  "generated order-service plugin output must match example"
+);
+
+const generatedBookPluginOutput = await renderPreviewPluginOutput("preview-metadata/examples/pr-book-service.json");
+const expectedBookPluginOutput = await readJson("preview-metadata/examples/appset-plugin-output-book-service.json");
+assert(
+  JSON.stringify(generatedBookPluginOutput) === JSON.stringify(expectedBookPluginOutput),
+  "generated book-service plugin output must match example"
+);
 
 const smokeConfig = await readText("preview-smoke/configmap.yaml");
 for (const key of [
   "PR_NUMBER",
   "AFFECTED_COMPONENTS",
-  "SMOKE_PROFILE",
+  "SMOKE_PROFILES",
   "FRONTEND_URL",
   "BOOK_SERVICE_URL",
   "READER_SERVICE_URL",

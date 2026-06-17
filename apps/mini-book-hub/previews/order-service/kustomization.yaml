@@ -1,0 +1,10 @@
+labels:
+  - pairs:
+      environment: preview
+      preview.mini-book-hub.io/profile: order-service
+    includeSelectors: false
+
+resources:
+  - ../../order-service/base
+  - ../../book-service/base
+  - ../../reader-service/base

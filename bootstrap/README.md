@@ -15,8 +15,8 @@ If Argo CD is already installed in namespace `argocd`:
 kubectl apply -f argocd/root.yaml
 ```
 
-The root application points at `argocd/apps`, which currently includes only the
-local/dev stack and Argo Rollouts.
+The root application points at `argocd/apps`, which includes the local/dev stack,
+Argo Rollouts, monitoring, and preview runtime control plane resources.
 
 ## Fresh Cluster
 
@@ -52,9 +52,8 @@ you only want this repository to apply the root application.
 
 ## Boundaries
 
-This bootstrap path does not build application images, install the future
-ApplicationSet plugin generator, promote image locks to staging/prod, or install
-monitoring. Those are separate pipeline/platform phases.
+This bootstrap path does not build application images or promote image locks to
+staging/prod. Those are separate pipeline/platform phases.
 
 The local/dev workloads use `Rollout` resources, so Argo Rollouts CRDs must be
 present before those workloads become healthy. The root includes the

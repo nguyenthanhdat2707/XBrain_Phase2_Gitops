@@ -2,6 +2,9 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: preview-smoke
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
   labels:
     app.kubernetes.io/name: preview-smoke
 spec:
