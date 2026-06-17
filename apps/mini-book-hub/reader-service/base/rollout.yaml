@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: reader-service
+  labels:
+    app.kubernetes.io/name: reader-service
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: mini-book-hub
+    app.kubernetes.io/managed-by: argocd
+spec:
+  replicas: 2
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: reader-service
+  strategy:
+    canary:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: reader-service
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/part-of: mini-book-hub
+        app.kubernetes.io/managed-by: argocd
+    spec:
+      # TODO: Add runAsNonRoot after the app images declare a tested non-root user.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: reader-service
+          image: ghcr.io/nguyenthanhdat2707/mini-book-hub-reader-service:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: reader-service-config
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL

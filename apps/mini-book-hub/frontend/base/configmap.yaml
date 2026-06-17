@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  labels:
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: mini-book-hub
+    app.kubernetes.io/managed-by: argocd
+data:
+  API_BASE_URL: ""
+  app.js: |
+    const API_BASE_URL = "";
+
+    const buttons = document.querySelectorAll("[data-path]");
+    const createOrderButton = document.querySelector("[data-create-order]");
+    const statusEl = document.querySelector("#status");
+    const endpointEl = document.querySelector("#endpoint");
+    const resultEl = document.querySelector("#result");
+
+    function setBusy(isBusy) {
+      [...buttons, createOrderButton].filter(Boolean).forEach((button) => {
+        button.disabled = isBusy;
+      });
+    }
+
+    async function sendRequest(path, options = {}, successStatus = "Loaded") {
+      const url = `${API_BASE_URL}${path}`;
+      statusEl.textContent = "Loading";
+      endpointEl.textContent = url;
+      resultEl.textContent = "";
+      setBusy(true);
+
+      try {
+        const response = await fetch(url, options);
+        const body = await response.json();
+
+        if (!response.ok) {
+          statusEl.textContent = "Error";
+          resultEl.textContent = JSON.stringify(body, null, 2);
+          return { ok: false, body };
+        }
+
+        statusEl.textContent = successStatus;
+        resultEl.textContent = JSON.stringify(body, null, 2);
+        return { ok: true, body };
+      } catch (error) {
+        statusEl.textContent = "Error";
+        resultEl.textContent = error.message || String(error);
+        return { ok: false, error };
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function loadPath(path) {
+      return sendRequest(path);
+    }
+
+    async function createSampleOrder() {
+      return sendRequest(
+        "/order",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json"
+          },
+          body: JSON.stringify({
+            readerId: "r-201",
+            bookId: "b-101"
+          })
+        },
+        "Created"
+      );
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => loadPath(button.dataset.path));
+    });
+
+    if (createOrderButton) {
+      createOrderButton.addEventListener("click", () => createSampleOrder());
+    }
+
+    if (typeof window !== "undefined") {
+      window.MiniBookHub = {
+        loadPath,
+        createSampleOrder
+      };
+    }
