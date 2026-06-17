@@ -1,5 +1,5 @@
 # Frontend Base
 
-Placeholder for the future frontend base desired state.
+Base desired state for the Mini Book Hub frontend Rollout, Service, and runtime ConfigMap.
 
-No Deployment, Service, Ingress, Rollout, HPA, or monitoring object is defined in this phase.
+The local overlay mounts `frontend-config` over `/usr/share/nginx/html/app.js` so the browser calls APIs through the local Ingress paths.

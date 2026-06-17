@@ -1,20 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mini-book-hub-root
+  name: book-service-local
   namespace: argocd
-  labels:
-    app.kubernetes.io/part-of: mini-book-hub
-    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
   source:
     repoURL: https://github.com/nguyenthanhdat2707/XBrain_Phase2_Gitops.git
     targetRevision: main
-    path: argocd/apps
+    path: apps/mini-book-hub/book-service/overlays/local
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: mini-book-hub-local
   syncPolicy:
     automated:
       prune: true

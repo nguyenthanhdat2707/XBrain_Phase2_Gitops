@@ -1,6 +1,24 @@
 # Argo CD Apps
 
-This directory contains Argo CD application skeletons.
+This directory contains Argo CD child Applications.
+
+Argo CD itself is a day-0 prerequisite. Use `../../bootstrap/bootstrap-cluster.sh`
+for a fresh cluster, or apply `../root.yaml` directly when Argo CD already
+exists.
+
+`kustomization.yaml` includes only the local/dev Applications for this phase:
+
+```text
+argo-rollouts
+mini-book-hub-local-env
+book-service-local
+reader-service-local
+order-service-local
+frontend-local
+ingress-local
+```
+
+`preview-appset.yaml` is intentionally not included yet.
 
 `preview-appset.yaml` defines the expected ApplicationSet Plugin Generator contract for pull request preview environments. The plugin service is intentionally not implemented in this phase.
 

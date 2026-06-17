@@ -2,7 +2,10 @@
 
 This repo owns Kubernetes/GitOps desired state.
 
-Argo CD will sync from this repo. It does not contain application source code, Terraform, Ansible, or old bootstrap scripts.
+Argo CD will sync from this repo. It does not contain application source code,
+Terraform, Ansible, or full platform bootstrap automation. It includes a small
+day-0 helper for installing Argo CD on a fresh cluster and applying the root
+application.
 
 ## Lifecycle
 
@@ -10,12 +13,13 @@ Argo CD will sync from this repo. It does not contain application source code, T
 desired state -> validate manifests -> Argo CD sync
 ```
 
-This phase prepares GitOps contracts and skeletons for future pull request preview environments. It does not build application images, implement the real ApplicationSet plugin service, add production promotion, canary, or monitoring.
+This repo now includes a fixed local/dev sandbox for Mini Book Hub runtime resources. It does not build application images, implement the real ApplicationSet plugin service, add production promotion, canary analysis, HPA, NetworkPolicy, or monitoring.
 
 ## Layout
 
 - `argocd`: future Argo CD root and app definitions.
 - `apps/mini-book-hub`: desired-state folders for frontend and backend services.
+- `bootstrap`: day-0 cluster bootstrap helper and migration notes.
 - `platform`: platform placeholders for future monitoring and Argo Rollouts.
 - `preview-metadata`: pull request preview metadata examples and contract notes.
 - `image-locks`: stable image digest examples for main and staging.
@@ -23,6 +27,52 @@ This phase prepares GitOps contracts and skeletons for future pull request previ
 - `preview-smoke`: preview smoke ConfigMap, Job, and script skeleton.
 
 Each Mini Book Hub component has `base` plus `local`, `staging`, `prod`, and `preview` overlays.
+
+## Bootstrap / Migration
+
+The root application assumes Argo CD already exists in the cluster. For a fresh
+cluster, run the bootstrap helper from this repository root:
+
+```sh
+./bootstrap/bootstrap-cluster.sh
+```
+
+If Argo CD is already installed in namespace `argocd`, the helper skips the
+install and applies `argocd/root.yaml`. If a platform team owns Argo CD
+installation, use:
+
+```sh
+INSTALL_ARGOCD=false ./bootstrap/bootstrap-cluster.sh
+```
+
+The bootstrap helper does not build application images, install the future
+ApplicationSet plugin generator, promote image locks, or install monitoring.
+Those remain separate platform/pipeline phases.
+
+## Local/Dev Runtime
+
+The local/dev environment is managed in namespace `mini-book-hub-local`.
+
+Argo CD root application `argocd/root.yaml` points at `argocd/apps`, which includes only the local/dev child Applications for this phase:
+
+- `argo-rollouts`
+- `mini-book-hub-local-env`
+- `book-service-local`
+- `reader-service-local`
+- `order-service-local`
+- `frontend-local`
+- `ingress-local`
+
+The local Ingress uses host `mini-book-hub.local` with direct paths:
+
+```text
+/       -> frontend:80
+/book   -> book-service:3000
+/reader -> reader-service:3000
+/order  -> order-service:3000
+```
+
+Map `mini-book-hub.local` to the local ingress controller IP manually if local DNS is not already configured.
 
 ## Preview Flow
 

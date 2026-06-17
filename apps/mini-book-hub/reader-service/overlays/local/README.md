@@ -1,5 +1,3 @@
 # Reader Service Local Overlay
 
-Placeholder for future local environment customization.
-
-No Kubernetes objects are defined in this phase.
+Local/dev reader-service resources for namespace `mini-book-hub-local`.

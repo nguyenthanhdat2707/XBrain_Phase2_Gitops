@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: book-service-config
+  labels:
+    app.kubernetes.io/name: book-service
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: mini-book-hub
+    app.kubernetes.io/managed-by: argocd
+data:
+  NODE_ENV: "production"
+  SERVICE_NAME: "book-service"
