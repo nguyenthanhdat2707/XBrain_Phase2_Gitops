@@ -17,3 +17,5 @@ network-runtime -> frontend, book-service, reader-service, order-service
 For example, a PR that changes `order-service`, `book-service`, or `reader-service` uses the `order-service` bundle when the PR gate needs to run the order integration flow. The changed component gets its candidate image; unchanged dependencies use stable image-lock images.
 
 Leaf service bundles remain available for isolated smoke checks, but PR impact metadata can select a broader bundle when a changed leaf service must be tested through a consumer.
+
+All preview bundles patch rendered Rollouts to `replicas: 1`. Runtime dependencies are deployed only so the selected smoke flow can run, not to mirror production capacity.

@@ -6,3 +6,11 @@ labels:
 
 resources:
   - ../../frontend/base
+
+patches:
+  - target:
+      kind: Rollout
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1

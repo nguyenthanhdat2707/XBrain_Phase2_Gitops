@@ -8,3 +8,11 @@ resources:
   - ../../order-service/base
   - ../../book-service/base
   - ../../reader-service/base
+
+patches:
+  - target:
+      kind: Rollout
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1

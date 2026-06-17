@@ -9,3 +9,11 @@ resources:
   - ../../book-service/base
   - ../../reader-service/base
   - ../../order-service/base
+
+patches:
+  - target:
+      kind: Rollout
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
