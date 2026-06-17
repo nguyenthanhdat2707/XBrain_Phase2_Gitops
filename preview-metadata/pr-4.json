@@ -1,0 +1,26 @@
+{
+  "apiVersion": "preview.mini-book-hub.io/v1",
+  "kind": "PreviewMetadata",
+  "pr": 4,
+  "status": "preview-ready",
+  "baseMainSha": "931fd31b4dd01c159b7017633ac8384da3c70e66",
+  "mergeResultSha": "812f66dc180e6dc0b242c4ac236f3cb6e719c368",
+  "affectedComponents": [
+    "frontend",
+    "book-service",
+    "reader-service",
+    "order-service"
+  ],
+  "candidateImages": {
+    "frontend": "ghcr.io/nguyenthanhdat2707/mini-book-hub-frontend@sha256:a5fd0e135a78b7cd6c090fb31f4b98ea37c4ff68ab056423e53954a4b989ca22",
+    "book-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-book-service@sha256:78ddcf28a6ca2c51510d78fb30ccfc51f289c81fd058a80dd14314799eb8cde2",
+    "reader-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-reader-service@sha256:7911e0018fbbeb5344ead2fcc6dfc7739564cf872d740bbb480f8c472abe5e2a",
+    "order-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-order-service@sha256:f088775b2a7092728084445d90dfcb7e598df450433a039f5166afb77e7f7c9d"
+  },
+  "stableImageLock": "image-locks/main.json",
+  "smokeProfile": "network-runtime",
+  "createdBy": {
+    "ciRunId": "27661839478",
+    "workflow": "pr-impact-gate"
+  }
+}
