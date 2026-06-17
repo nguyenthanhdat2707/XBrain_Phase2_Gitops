@@ -1,5 +1,6 @@
 resources:
   - argo-rollouts.yaml
+  - monitoring.yaml
   - mini-book-hub-local-env.yaml
   - book-service-local.yaml
   - reader-service-local.yaml

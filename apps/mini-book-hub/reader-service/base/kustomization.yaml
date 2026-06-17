@@ -1,4 +1,6 @@
 resources:
+  - analysis-template.yaml
   - configmap.yaml
+  - servicemonitor.yaml
   - service.yaml
   - rollout.yaml

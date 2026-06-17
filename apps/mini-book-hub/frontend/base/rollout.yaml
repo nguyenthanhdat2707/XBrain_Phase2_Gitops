@@ -17,6 +17,10 @@ spec:
     canary:
       maxSurge: 1
       maxUnavailable: 0
+      steps:
+        - setWeight: 50
+        - pause:
+            duration: 30s
   template:
     metadata:
       labels:
