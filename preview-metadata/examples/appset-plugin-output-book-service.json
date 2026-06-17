@@ -6,9 +6,9 @@
   "affectedComponents": "book-service",
   "smokeProfiles": "book-service,order-service",
   "images": {
-    "frontend": "ghcr.io/nguyenthanhdat2707/mini-book-hub-frontend@sha256:stablefrontend",
+    "frontend": "ghcr.io/nguyenthanhdat2707/mini-book-hub-frontend@sha256:d83e187cd1ceb0a6fb5e681cc7d0c958ad6df88147f07afc4c47066ff74e0cc9",
     "book-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-book-service@sha256:candidatebookservice",
-    "reader-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-reader-service@sha256:stablereaderservice",
-    "order-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-order-service@sha256:stableorderservice"
+    "reader-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-reader-service@sha256:78470cff925c8ae69d0031bf8f99648594b8a6c0200fea4e3fc31c7399951788",
+    "order-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-order-service@sha256:ffc9188afeace0188a7ef886d54562b7292a0c6ecc8d8c9d5b6e4b0f0c300d4c"
   }
 }
