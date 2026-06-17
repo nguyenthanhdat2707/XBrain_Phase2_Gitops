@@ -10,6 +10,7 @@ exists.
 
 ```text
 argo-rollouts
+monitoring
 mini-book-hub-local-env
 book-service-local
 reader-service-local
@@ -19,6 +20,9 @@ ingress-local
 ```
 
 `preview-appset.yaml` is intentionally not included yet.
+
+`monitoring.yaml` installs kube-prometheus-stack. Backend local Applications
+include ServiceMonitor and AnalysisTemplate resources for canary SLO checks.
 
 `preview-appset.yaml` defines the expected ApplicationSet Plugin Generator contract for pull request preview environments. The plugin service is intentionally not implemented in this phase.
 

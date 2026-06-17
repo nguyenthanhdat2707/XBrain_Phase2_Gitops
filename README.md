@@ -13,14 +13,17 @@ application.
 desired state -> validate manifests -> Argo CD sync
 ```
 
-This repo now includes a fixed local/dev sandbox for Mini Book Hub runtime resources. It does not build application images, implement the real ApplicationSet plugin service, add production promotion, canary analysis, HPA, NetworkPolicy, or monitoring.
+This repo now includes a fixed local/dev sandbox for Mini Book Hub runtime
+resources, basic monitoring, ServiceMonitors, and SLO-backed canary templates.
+It does not build application images, implement the real ApplicationSet plugin
+service, add production promotion, HPA, NetworkPolicy, or alert routing.
 
 ## Layout
 
 - `argocd`: future Argo CD root and app definitions.
 - `apps/mini-book-hub`: desired-state folders for frontend and backend services.
 - `bootstrap`: day-0 cluster bootstrap helper and migration notes.
-- `platform`: platform placeholders for future monitoring and Argo Rollouts.
+- `platform`: platform notes for monitoring and Argo Rollouts.
 - `preview-metadata`: pull request preview metadata examples and contract notes.
 - `image-locks`: stable image digest examples for main and staging.
 - `schemas`: JSON schemas for preview metadata, image locks, plugin output, and smoke config.
@@ -46,8 +49,8 @@ INSTALL_ARGOCD=false ./bootstrap/bootstrap-cluster.sh
 ```
 
 The bootstrap helper does not build application images, install the future
-ApplicationSet plugin generator, promote image locks, or install monitoring.
-Those remain separate platform/pipeline phases.
+ApplicationSet plugin generator, or promote image locks. Those remain separate
+platform/pipeline phases.
 
 ## Local/Dev Runtime
 
@@ -56,6 +59,7 @@ The local/dev environment is managed in namespace `mini-book-hub-local`.
 Argo CD root application `argocd/root.yaml` points at `argocd/apps`, which includes only the local/dev child Applications for this phase:
 
 - `argo-rollouts`
+- `monitoring`
 - `mini-book-hub-local-env`
 - `book-service-local`
 - `reader-service-local`
@@ -73,6 +77,10 @@ The local Ingress uses host `mini-book-hub.local` with direct paths:
 ```
 
 Map `mini-book-hub.local` to the local ingress controller IP manually if local DNS is not already configured.
+
+Backend Rollouts use Prometheus-backed AnalysisTemplates. The monitoring
+Application installs kube-prometheus-stack and Prometheus discovers backend
+`ServiceMonitor` resources across namespaces.
 
 ## Preview Flow
 

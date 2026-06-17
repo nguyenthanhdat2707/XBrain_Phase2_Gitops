@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: reader-service-slo
+  labels:
+    app.kubernetes.io/name: reader-service
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: mini-book-hub
+    app.kubernetes.io/managed-by: argocd
+spec:
+  args:
+    - name: prometheus-address
+      value: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+  metrics:
+    - name: metrics-present
+      interval: 30s
+      count: 2
+      failureLimit: 1
+      successCondition: "result[0] >= 1"
+      provider:
+        prometheus:
+          address: "{{args.prometheus-address}}"
+          query: |
+            max(mini_book_hub_service_info{service="reader-service"}) or vector(0)
+    - name: http-5xx-rate
+      interval: 30s
+      count: 2
+      failureLimit: 1
+      successCondition: "result[0] <= 0.05"
+      provider:
+        prometheus:
+          address: "{{args.prometheus-address}}"
+          query: |
+            sum(rate(mini_book_hub_http_requests_total{service="reader-service",status_code=~"5.."}[2m])) or vector(0)
+    - name: p95-latency
+      interval: 30s
+      count: 2
+      failureLimit: 1
+      successCondition: "result[0] <= 0.5"
+      provider:
+        prometheus:
+          address: "{{args.prometheus-address}}"
+          query: |
+            histogram_quantile(0.95, sum(rate(mini_book_hub_http_request_duration_seconds_bucket{service="reader-service"}[2m])) by (le)) or vector(0)
