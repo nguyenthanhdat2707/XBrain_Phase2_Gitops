@@ -7,7 +7,7 @@
   "required": [
     "PR_NUMBER",
     "AFFECTED_COMPONENTS",
-    "SMOKE_PROFILE",
+    "SMOKE_PROFILES",
     "FRONTEND_URL",
     "BOOK_SERVICE_URL",
     "READER_SERVICE_URL",
@@ -22,14 +22,9 @@
       "type": "string",
       "minLength": 1
     },
-    "SMOKE_PROFILE": {
-      "enum": [
-        "frontend",
-        "book-service",
-        "reader-service",
-        "order-service",
-        "network-runtime"
-      ]
+    "SMOKE_PROFILES": {
+      "type": "string",
+      "pattern": "^(frontend|book-service|reader-service|order-service|network-runtime)(,(frontend|book-service|reader-service|order-service|network-runtime))*$"
     },
     "FRONTEND_URL": {
       "$ref": "#/$defs/httpUrl"

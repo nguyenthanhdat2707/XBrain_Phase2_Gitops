@@ -62,7 +62,7 @@ create_sample_order() {
 check_common_env() {
   require_env PR_NUMBER
   require_env AFFECTED_COMPONENTS
-  require_env SMOKE_PROFILE
+  require_env SMOKE_PROFILES
   require_env FRONTEND_URL
   require_env BOOK_SERVICE_URL
   require_env READER_SERVICE_URL
@@ -79,7 +79,6 @@ run_book_service() {
   http_get "book-ready" "${BOOK_SERVICE_URL}/readyz"
   http_get "book-list" "${BOOK_SERVICE_URL}/book"
   http_get "book-availability" "${BOOK_SERVICE_URL}/book/b-101/availability"
-  create_sample_order
 }
 
 run_reader_service() {
@@ -87,7 +86,6 @@ run_reader_service() {
   http_get "reader-ready" "${READER_SERVICE_URL}/readyz"
   http_get "reader-list" "${READER_SERVICE_URL}/reader"
   http_get "reader-status" "${READER_SERVICE_URL}/reader/r-201/status"
-  create_sample_order
 }
 
 run_order_service() {
@@ -106,29 +104,36 @@ run_network_runtime() {
 }
 
 check_common_env
-log "profile=${SMOKE_PROFILE}"
+log "profiles=${SMOKE_PROFILES}"
 log "pr=${PR_NUMBER}"
 log "affectedComponents=${AFFECTED_COMPONENTS}"
 
-case "$SMOKE_PROFILE" in
-  frontend)
-    run_frontend
-    ;;
-  book-service)
-    run_book_service
-    ;;
-  reader-service)
-    run_reader_service
-    ;;
-  order-service)
-    run_order_service
-    ;;
-  network-runtime)
-    run_network_runtime
-    ;;
-  *)
-    fail "profile-supported"
-    ;;
-esac
+old_ifs="$IFS"
+IFS=","
+for profile in $SMOKE_PROFILES; do
+  log "profile=${profile}"
+
+  case "$profile" in
+    frontend)
+      run_frontend
+      ;;
+    book-service)
+      run_book_service
+      ;;
+    reader-service)
+      run_reader_service
+      ;;
+    order-service)
+      run_order_service
+      ;;
+    network-runtime)
+      run_network_runtime
+      ;;
+    *)
+      fail "profile-supported"
+      ;;
+  esac
+done
+IFS="$old_ifs"
 
 log "result=pass"

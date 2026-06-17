@@ -1,5 +1,5 @@
 # Order Service Preview Overlay
 
-Placeholder for the per-component order-service preview overlay.
+Reserved for future order-service-only preview overrides.
 
-The future ApplicationSet plugin should render this overlay for `preview-pr-<number>-order-service`.
+Current hybrid PR preview runtime bundles live under `apps/mini-book-hub/previews`.

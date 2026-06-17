@@ -1,0 +1,11 @@
+labels:
+  - pairs:
+      environment: preview
+      preview.mini-book-hub.io/profile: network-runtime
+    includeSelectors: false
+
+resources:
+  - ../../frontend/base
+  - ../../book-service/base
+  - ../../reader-service/base
+  - ../../order-service/base

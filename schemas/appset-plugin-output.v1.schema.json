@@ -6,11 +6,11 @@
   "additionalProperties": false,
   "required": [
     "pr",
-    "component",
+    "previewProfile",
     "namespace",
     "applicationName",
     "affectedComponents",
-    "smokeProfile",
+    "smokeProfiles",
     "images"
   ],
   "properties": {
@@ -18,8 +18,8 @@
       "type": "string",
       "pattern": "^[1-9][0-9]*$"
     },
-    "component": {
-      "$ref": "#/$defs/component"
+    "previewProfile": {
+      "$ref": "#/$defs/smokeProfile"
     },
     "namespace": {
       "type": "string",
@@ -27,14 +27,15 @@
     },
     "applicationName": {
       "type": "string",
-      "pattern": "^preview-pr-[1-9][0-9]*-(frontend|book-service|reader-service|order-service)$"
+      "pattern": "^preview-pr-[1-9][0-9]*-(frontend|book-service|reader-service|order-service|network-runtime)$"
     },
     "affectedComponents": {
       "type": "string",
       "minLength": 1
     },
-    "smokeProfile": {
-      "$ref": "#/$defs/smokeProfile"
+    "smokeProfiles": {
+      "type": "string",
+      "pattern": "^(frontend|book-service|reader-service|order-service|network-runtime)(,(frontend|book-service|reader-service|order-service|network-runtime))*$"
     },
     "images": {
       "type": "object",
@@ -62,9 +63,6 @@
     }
   },
   "$defs": {
-    "component": {
-      "enum": ["frontend", "book-service", "reader-service", "order-service"]
-    },
     "smokeProfile": {
       "enum": [
         "frontend",

@@ -1,10 +1,10 @@
 {
   "pr": "123",
-  "component": "order-service",
+  "previewProfile": "order-service",
   "namespace": "pr-123",
   "applicationName": "preview-pr-123-order-service",
   "affectedComponents": "order-service",
-  "smokeProfile": "order-service",
+  "smokeProfiles": "order-service",
   "images": {
     "frontend": "ghcr.io/nguyenthanhdat2707/mini-book-hub-frontend@sha256:stablefrontend",
     "book-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-book-service@sha256:stablebookservice",

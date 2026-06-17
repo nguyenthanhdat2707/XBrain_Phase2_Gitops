@@ -1,0 +1,22 @@
+namespace: argocd
+
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: argocd
+    includeSelectors: false
+
+resources:
+  - configmap.yaml
+  - deployment.yaml
+  - service.yaml
+
+configMapGenerator:
+  - name: mini-book-hub-preview-plugin-code
+    files:
+      - plugin/preview-plugin.mjs
+      - plugin/server.mjs
+
+generatorOptions:
+  labels:
+    app.kubernetes.io/name: mini-book-hub-preview-plugin
+    app.kubernetes.io/part-of: mini-book-hub

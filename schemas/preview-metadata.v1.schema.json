@@ -14,7 +14,8 @@
     "affectedComponents",
     "candidateImages",
     "stableImageLock",
-    "smokeProfile",
+    "previewProfile",
+    "smokeProfiles",
     "createdBy"
   ],
   "properties": {
@@ -70,8 +71,16 @@
       "type": "string",
       "pattern": "^image-locks/[A-Za-z0-9._-]+\\.json$"
     },
-    "smokeProfile": {
+    "previewProfile": {
       "$ref": "#/$defs/smokeProfile"
+    },
+    "smokeProfiles": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/smokeProfile"
+      }
     },
     "createdBy": {
       "type": "object",

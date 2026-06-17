@@ -1,5 +1,5 @@
 # Frontend Preview Overlay
 
-Placeholder for the per-component frontend preview overlay.
+Reserved for future frontend-only preview overrides.
 
-The future ApplicationSet plugin should render this overlay for `preview-pr-<number>-frontend`.
+Current hybrid PR preview runtime bundles live under `apps/mini-book-hub/previews`.

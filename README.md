@@ -14,22 +14,22 @@ desired state -> validate manifests -> Argo CD sync
 ```
 
 This repo now includes a fixed local/dev sandbox for Mini Book Hub runtime
-resources, basic monitoring, ServiceMonitors, and SLO-backed canary templates.
-It does not build application images, implement the real ApplicationSet plugin
-service, add production promotion, HPA, NetworkPolicy, or alert routing.
+resources, basic monitoring, ServiceMonitors, SLO-backed canary templates, and
+the preview ApplicationSet plugin service. It does not build application images,
+add production promotion, HPA, NetworkPolicy, or alert routing.
 
 ## Layout
 
 - `argocd`: future Argo CD root and app definitions.
 - `apps/mini-book-hub`: desired-state folders for frontend and backend services.
 - `bootstrap`: day-0 cluster bootstrap helper and migration notes.
-- `platform`: platform notes for monitoring and Argo Rollouts.
+- `platform`: platform notes and manifests for monitoring, Argo Rollouts, and the preview plugin.
 - `preview-metadata`: pull request preview metadata examples and contract notes.
 - `image-locks`: stable image digest examples for main and staging.
 - `schemas`: JSON schemas for preview metadata, image locks, plugin output, and smoke config.
 - `preview-smoke`: preview smoke ConfigMap, Job, and script skeleton.
 
-Each Mini Book Hub component has `base` plus `local`, `staging`, `prod`, and `preview` overlays.
+Each Mini Book Hub component has `base` plus environment overlays. Hybrid preview runtime bundles live under `apps/mini-book-hub/previews`.
 
 ## Bootstrap / Migration
 
@@ -48,18 +48,19 @@ installation, use:
 INSTALL_ARGOCD=false ./bootstrap/bootstrap-cluster.sh
 ```
 
-The bootstrap helper does not build application images, install the future
-ApplicationSet plugin generator, or promote image locks. Those remain separate
-platform/pipeline phases.
+The bootstrap helper does not build application images or promote image locks.
+Those remain separate platform/pipeline phases.
 
 ## Local/Dev Runtime
 
 The local/dev environment is managed in namespace `mini-book-hub-local`.
 
-Argo CD root application `argocd/root.yaml` points at `argocd/apps`, which includes only the local/dev child Applications for this phase:
+Argo CD root application `argocd/root.yaml` points at `argocd/apps`, which includes the local/dev stack and preview runtime control plane:
 
 - `argo-rollouts`
 - `monitoring`
+- `preview-plugin`
+- `mini-book-hub-preview`
 - `mini-book-hub-local-env`
 - `book-service-local`
 - `reader-service-local`
@@ -87,8 +88,10 @@ Application installs kube-prometheus-stack and Prometheus discovers backend
 ```text
 app CI writes preview metadata
 -> ApplicationSet plugin reads metadata, image locks, and preview-ready label
--> ApplicationSet creates per-component preview Applications
+-> ApplicationSet creates one hybrid preview runtime Application for the PR
 -> Argo CD syncs namespace pr-<number>
 -> preview smoke Job runs inside that namespace
 -> user approves or rejects manually based on smoke result
 ```
+
+Hybrid preview means only affected components receive candidate images. The impact graph can still deploy unchanged runtime dependencies when a smoke profile needs them, but those dependencies use stable image-lock digests.
