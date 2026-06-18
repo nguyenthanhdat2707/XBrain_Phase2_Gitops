@@ -4,16 +4,21 @@
   "pr": 7,
   "status": "preview-ready",
   "baseMainSha": "2f8da68c06d61b309ef806c1b383e67080bf85cd",
-  "mergeResultSha": "e43693df32bd4df8c4b1a3ba5c2ab01fbd11156b",
-  "affectedComponents": ["book-service"],
+  "mergeResultSha": "d6937054c5d1cbc40baa7368b94536371836a7cf",
+  "affectedComponents": [
+    "book-service"
+  ],
   "candidateImages": {
-    "book-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-book-service@sha256:262fa64a63dd28cf0b383ca99a713e58494e92f5332674bc0695a9138560f481"
+    "book-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-book-service@sha256:b6b2dde4111170c5f75ea163f842b89e695c702097d82b66597a002a0a9bb4d4"
   },
   "stableImageLock": "image-locks/main.json",
   "previewProfile": "order-service",
-  "smokeProfiles": ["book-service", "order-service"],
+  "smokeProfiles": [
+    "book-service",
+    "order-service"
+  ],
   "createdBy": {
-    "ciRunId": "27713551654",
+    "ciRunId": "27734483820",
     "workflow": "pr-impact-gate"
   }
 }
