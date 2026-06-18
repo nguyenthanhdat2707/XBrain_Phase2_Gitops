@@ -5,18 +5,13 @@
   "status": "preview-ready",
   "baseMainSha": "2f8da68c06d61b309ef806c1b383e67080bf85cd",
   "mergeResultSha": "d6937054c5d1cbc40baa7368b94536371836a7cf",
-  "affectedComponents": [
-    "book-service"
-  ],
+  "affectedComponents": ["book-service"],
   "candidateImages": {
     "book-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-book-service@sha256:b6b2dde4111170c5f75ea163f842b89e695c702097d82b66597a002a0a9bb4d4"
   },
   "stableImageLock": "image-locks/main.json",
   "previewProfile": "order-service",
-  "smokeProfiles": [
-    "book-service",
-    "order-service"
-  ],
+  "smokeProfiles": ["book-service", "order-service"],
   "createdBy": {
     "ciRunId": "27734483820",
     "workflow": "pr-impact-gate"
