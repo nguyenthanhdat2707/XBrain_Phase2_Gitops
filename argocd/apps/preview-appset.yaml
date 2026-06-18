@@ -35,6 +35,8 @@ spec:
   template:
     metadata:
       name: "{{ .applicationName }}"
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
       labels:
         app.kubernetes.io/part-of: mini-book-hub
         preview.mini-book-hub.io/pr: "{{ .pr }}"
@@ -89,3 +91,11 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
+        managedNamespaceMetadata:
+          labels:
+            app.kubernetes.io/part-of: mini-book-hub
+            environment: preview
+            preview.mini-book-hub.io/pr: "{{ .pr }}"
+            preview.mini-book-hub.io/profile: "{{ .previewProfile }}"
+          annotations:
+            argocd.argoproj.io/tracking-id: "{{ .applicationName }}:/Namespace:/{{ .namespace }}"

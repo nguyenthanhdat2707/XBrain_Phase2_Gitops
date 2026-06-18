@@ -70,3 +70,20 @@ preview-smoke
 ```
 
 The preview runtime source receives all resolved images through Argo CD Kustomize image overrides. The smoke source receives PR number, affected components, and smoke profiles through Kustomize patches.
+
+## Preview cleanup
+
+Preview cleanup is driven by the same ApplicationSet plugin that creates previews. The plugin only returns metadata for PRs that are both open and labeled `preview-ready`.
+
+That gives two cleanup paths:
+
+```text
+PR merged or closed       -> GitHub PR state is no longer open -> plugin skips it
+preview-ready removed    -> readiness gate is no longer true   -> plugin skips it
+```
+
+When the plugin stops returning a PR, `mini-book-hub-preview` stops generating the matching `preview-pr-<N>-<profile>` Application. The generated Application has `resources-finalizer.argocd.argoproj.io`, so deleting the Application cascades to its preview runtime resources.
+
+Each preview Application also sets `managedNamespaceMetadata` for its dedicated `pr-<N>` namespace. This adds Argo CD tracking metadata to the namespace created by `CreateNamespace=true`, allowing the namespace to be cleaned with the rest of the preview resources.
+
+Use label removal as a manual kill switch when a PR stays open but the preview should stop, for example when the branch is paused, the preview is too expensive, or the PR is converted to documentation-only work.
