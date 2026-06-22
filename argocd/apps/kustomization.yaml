@@ -3,9 +3,10 @@ resources:
   - monitoring.yaml
   - preview-plugin.yaml
   - preview-appset.yaml
-  - mini-book-hub-local-env.yaml
-  - book-service-local.yaml
-  - reader-service-local.yaml
-  - order-service-local.yaml
-  - frontend-local.yaml
-  - ingress-local.yaml
+  # Local static environment is disabled while PR preview runtime is the active path.
+  # - mini-book-hub-local-env.yaml
+  # - book-service-local.yaml
+  # - reader-service-local.yaml
+  # - order-service-local.yaml
+  # - frontend-local.yaml
+  # - ingress-local.yaml
