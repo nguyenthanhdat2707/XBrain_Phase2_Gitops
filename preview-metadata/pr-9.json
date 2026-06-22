@@ -1,0 +1,20 @@
+{
+  "apiVersion": "preview.mini-book-hub.io/v1",
+  "kind": "PreviewMetadata",
+  "pr": 9,
+  "status": "preview-ready",
+  "baseMainSha": "e0ba7d460ae3d2e1bb54ea4ffbf5354dd5f9b5b7",
+  "mergeResultSha": "9a8172808bf1f34df337ef6de6bd1b689142f75f",
+  "affectedComponents": ["book-service", "reader-service"],
+  "candidateImages": {
+    "book-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-book-service@sha256:21685d26ba217f9f021127badfdd85fa348d15783b328d9bdda789854c1e2c42",
+    "reader-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-reader-service@sha256:890e36759388ccc31da525f2af676ff6f5fdf3ddd602f27a01b509483ac2b6a4"
+  },
+  "stableImageLock": "image-locks/main.json",
+  "previewProfile": "order-service",
+  "smokeProfiles": ["book-service", "order-service", "reader-service"],
+  "createdBy": {
+    "ciRunId": "27956626111",
+    "workflow": "pr-impact-gate"
+  }
+}
