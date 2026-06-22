@@ -1,0 +1,19 @@
+{
+  "apiVersion": "preview.mini-book-hub.io/v1",
+  "kind": "PreviewMetadata",
+  "pr": 10,
+  "status": "preview-ready",
+  "baseMainSha": "e0ba7d460ae3d2e1bb54ea4ffbf5354dd5f9b5b7",
+  "mergeResultSha": "5c062b7aa476d3c399afcd0a7be26cc8d6bb386e",
+  "affectedComponents": ["reader-service"],
+  "candidateImages": {
+    "reader-service": "ghcr.io/nguyenthanhdat2707/mini-book-hub-reader-service@sha256:382d43140b39742b7e52928c7e81e39bcb5032f83aa4091213e3bc03fdcec436"
+  },
+  "stableImageLock": "image-locks/main.json",
+  "previewProfile": "order-service",
+  "smokeProfiles": ["reader-service", "order-service"],
+  "createdBy": {
+    "ciRunId": "27958971989",
+    "workflow": "pr-impact-gate"
+  }
+}
